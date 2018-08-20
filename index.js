@@ -8,6 +8,7 @@ const generateComponent = require('./bin/component')
 const addComponent = require('./bin/addComponent')
 const removeComponent = require('./bin/removeComponent')
 const { installPackages, uninstallPackages } = require('./bin/lib/Installer')
+const { searchPackage, listPackages } = require('./bin/lib/Library')
 
 commander
     .version(package.version, '-v, --version')
@@ -46,5 +47,15 @@ commander
     .command('uninstall <package> [otherPackages...]')
     .description('uninstall package')
     .action(uninstallPackages)
+
+commander
+    .command('search <package>')
+    .description('search anka package')
+    .action(searchPackage)
+
+commander
+    .command('list')
+    .description('list all anka packages')
+    .action(listPackages)
 
 commander.parse(process.argv)
