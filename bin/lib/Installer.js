@@ -1,5 +1,6 @@
 const npm = require('npm');
 const fs = require('fs')
+const chalk = require('chalk')
 const ncp = require('ncp').ncp
 
 const LIB_CONFIG = '/lib.config.json'
@@ -21,6 +22,7 @@ class _Installer {
 
 		return new Promise(resolve => {
 			npm.load(error => {
+				console.log(chalk.green('========== Anka Installer Initialization Completed! =========='))
 				error ? process.exit(1) : resolve()
 			}) 
 		});
@@ -46,7 +48,6 @@ class _Installer {
 
 	inject(paths) {
 		Promise.all(paths.map(item => {
-
 			let packagePaths = item[1].split('/');
 			let configPath = item[1] + ANKA_CONFIG;
 			let componentPath = item[1] + COMPONENT_DIR;
@@ -58,11 +59,12 @@ class _Installer {
 					if (!fs.existsSync(destination)){
 					    fs.mkdirSync(destination);
 					}
+					console.log('Injecting: ' + chalk.yellow(packagePaths[packagePaths.length - 1]));
 					ncp(componentPath, destination, function (err) {
 						if (err) {
 							return console.error(err);
 						}
-						console.log('done!');
+						console.log(chalk.green('========== Cheers! Now You Can Start Acting! =========='))
 					});
 				}
 			}
@@ -71,9 +73,12 @@ class _Installer {
 }
 
 async function installPackages(package, otherPackages) {
+	let packages = [package, ...otherPackages];
 	let installer = new _Installer([package, ...otherPackages]);
+	console.log('Now Installing Packages: ' + chalk.yellow(...packages));
 	try {
 		let result = await installer.install();
+		console.log(chalk.green('========== Install Finished, Now Injecting Anka Packages into Miniprogram =========='))
 		installer.inject(result);
 	} catch (err) {
 		console.log('error' + err)
